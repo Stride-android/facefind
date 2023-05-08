@@ -15,7 +15,7 @@ import cv2
 from threading import Lock
 
 app = Flask(__name__)
-# run_with_ngrok(app)
+run_with_ngrok(app)
 
 # Set the allowed file extensions for image and video files
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'mp4', 'avi', 'mkv'}
