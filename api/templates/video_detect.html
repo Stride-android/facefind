@@ -1,0 +1,202 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Face Recognition</title>
+    <style>
+        /* .slider-thumb::before {
+            position: absolute;
+            content: "";
+            margin-left: -500px;
+            top: 25%;
+            width: 2650px;
+            height: 450px;
+            background: linear-gradient(90deg, #000000, #000000);
+            border-radius: 62% 47% 82% 35% / 45% 45% 80% 66%;
+            will-change: border-radius, transform, opacity;
+            animation: sliderShape 3s linear infinite;
+            display: block;
+            z-index: -1;
+            -webkit-animation: sliderShape 3s linear infinite;
+        } */
+
+
+        /* @keyframes sliderShape {
+
+            0%,
+            100% {
+                border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+                transform: translate3d(0, 0, 0) rotateZ(0.01deg);
+            }
+
+            34% {
+                border-radius: 70% 30% 46% 54% / 30% 29% 71% 70%;
+                transform: translate3d(0, 5px, 0) rotateZ(0.01deg);
+            }
+
+            50% {
+                transform: translate3d(0, 0, 0) rotateZ(0.01deg);
+            }
+
+            67% {
+                border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+                transform: translate3d(0, -3px, 0) rotateZ(0.01deg);
+            }
+        } */
+
+
+        body {
+            background-color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, .9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            height: 400px;
+            text-align: center;
+        }
+
+        .center {}
+
+        h1 {
+            color: #FFFFFF;
+            margin-top: 0;
+        }
+
+        form {
+            margin-top: 30px;
+        }
+
+        .input-card {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        input[type="file"] {
+            margin: 10px;
+        }
+
+        input[type="submit"] {
+            background-color: #1E90FF;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            margin-top: 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 150px;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1874CD;
+        }
+
+        .video-text {
+            margin-top: 80px;
+            color: rgba(0, 0, 0, .9);
+            font-weight: bold;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        /* Add a container for the frame to adjust its size and position */
+
+
+        #frame {
+            border-radius: 25px;
+            box-shadow: 0px 187px 75px rgba(0, 0, 0, 0.01), 0px 105px 63px rgba(0, 0, 0, 0.05), 0px 47px 47px rgba(0, 0, 0, 0.09), 0px 12px 26px rgba(0, 0, 0, 0.1), 0px 0px 0px rgba(0, 0, 0, 0.1);
+            border: 5px solid #000000;
+            background-color: #73AD21;
+            height: 300px;
+            width: 600px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div align="center">
+        <div class="card" style="display: inline-block">
+            <h1>Face Recognition</h1>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <div class="input-card">
+                    <h3>Upload Images</h3>
+                    <input type="file" name="images[]" multiple>
+                </div>
+                <div class="input-card">
+                    <h3>Upload Video</h3>
+                    <input type="file" name="video">
+                </div>
+                <input type="submit" value="Upload">
+            </form>
+        </div>
+        <div style="display: inline-block;height: 400px;width: 610px;margin-left: 100px;">
+            <div class="center"
+                style="color: #fff;margin-bottom: 40px;background: rgba(0, 0, 0, .9);height: 35px; border-radius: 10px; width: 500px;">
+                <h2 style="margin-top: 100px;">Processed Video will be Displayed below</h2>
+            </div>
+            <div class="frame-container">
+                <img id="frame" src="">
+            </div>
+        </div>
+
+        <div class="video-text" id="message">
+            <h2></h2>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Poll the first Flask route every 0.1 seconds
+        setInterval(function () {
+            $.ajax({
+                url: '/poll',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    // Update the HTML with the response data
+                    $('#message').text(response.message);
+                },
+                error: function (error) {
+                    console.error('Error polling server:', error);
+                }
+            });
+        }, 100); // 0.1 seconds in milliseconds
+
+        // Poll the second Flask route every 0.1 seconds
+        setInterval(function () {
+            $.ajax({
+                url: '/poll2',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    // Update the HTML with the received frame data
+                    $('#frame').attr('src', 'data:image/jpeg;base64,' + response.frame);
+                },
+                error: function (error) {
+                    console.error('Error polling server:', error);
+                }
+            });
+        }, 100); // 0.1 seconds in milliseconds
+    </script>
+    <!-- <div class="slider-thumb"></div> -->
+
+</body>
+
+</html>
